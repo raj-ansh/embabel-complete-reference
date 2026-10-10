@@ -1,0 +1,78 @@
+# Embabel: The Complete Reference — Companion Code
+
+Source code for the book series *Embabel: The Complete Reference* by Rajkumar Panda.
+
+Every folder is a standalone build. The examples were compiled and their tests run against:
+
+| | Version |
+|---|---|
+| Embabel Agent | 1.5.3 |
+| Spring Boot | 4.1.1 |
+| Spring AI | 2.0.1 |
+| Java | 21 (Java 25 where noted) |
+| Maven | 3.9 or newer |
+
+## Contents
+
+### Volume 1: Foundations, Agents and Planning
+
+| Folder | Chapter | What it shows |
+|---|---|---|
+| `ch02-raw-call` | 2 | A raw HTTP call to an LLM, with no framework (plain `javac`) |
+| `ch07-spring-fundamentals` | 7 | Dependency injection, configuration and events |
+| `ch08-spring-boot-fundamentals` | 8 | A Spring Boot REST service with Actuator |
+| `ch09-spring-ai-fundamentals` | 9 | `ChatClient`, structured output and tools in Spring AI |
+| `ch13-first-embabel-project` | 13 | The first Embabel project (Maven **and** Gradle builds) |
+| `ch14-configuration` | 14 | Embabel configuration properties and model roles |
+| `p01-greeting-assistant` | 15 | **P1** AI Greeting Assistant |
+| `ch16-text-generation` | 16 | Text generation with `Ai` and `PromptRunner` |
+| `p02-content-generator` | 17 | **P2** Structured AI Content Generator |
+| `ch18-first-agent` | 18 | A first `@Agent` |
+| `ch19-invoking-agents` | 19 | Invoking agents from REST and code |
+| `ch20-shell` | 20 | The Embabel shell |
+| `p03-customer-support-agent` | 21 | **P3** Customer Support Agent |
+| `part04-core-concepts` | 22–30 | Actions, goals, conditions, domain objects, blackboard, context, processes |
+| `part05-planning` | 31–36 | GOAP, Utility, Hybrid and Supervisor planning, autonomy |
+| `p04-research-agent` | 37 | **P4** Research Agent |
+
+### Volume 2: Tools, Multi-Agent Systems, RAG and State
+
+| Folder | Chapter | What it shows |
+|---|---|---|
+| `p05-tool-using-agent` | 39–48 | **P5** Tool-Using Business Agent: tools, tool groups, context, security |
+| `part07-multi-agent` | 49–51 | Subagents, supervisors, nested processes and failure handling |
+| `p09-purchase-approval` | 52 | **P9** Human-in-the-Loop Approval Agent |
+| `p06-customer-service-platform` | 53 | **P6** Multi-Agent Customer Service Platform |
+| `p07-document-rag-assistant` | 55–62 | **P7** Document RAG Assistant (Lucene, ingestion, `ToolishRag`) |
+| `p08-agentic-rag-assistant` | 60, 61, 63 | **P8** Agentic RAG Knowledge Assistant |
+| `p10-persistent-stateful-agent` | 64–69 | **P10** Persistent Stateful Agent (`@State`, JDBC persistence, snapshots) |
+
+Volume 3 code (Chapters 70–122, projects P11–P15) will be added when that volume is published.
+
+## Running the tests
+
+The tests stub the model, so they run offline with no API key:
+
+```bash
+cd p05-tool-using-agent
+mvn test
+```
+
+To run an application against a real model, set a provider key in the environment (never in a committed file), for example:
+
+```bash
+export OPENAI_API_KEY=...     # or ANTHROPIC_API_KEY, or use a local model via Ollama
+mvn spring-boot:run
+```
+
+Chapter 12 of the book covers the development environment and provider setup.
+
+## A note on outputs
+
+Output shown in the book as **Captured** was printed by these tests. Model answers shown as **illustrative** were not produced by a live model, and a real model's wording will differ.
+
+## Licence
+
+The code is released under the [MIT License](LICENSE).
+
+The book's text is copyright © 2026 Rajkumar Panda and is not part of this repository. NorthWind Outfitters and all its data are fictional. This project is independent and is not endorsed by Embabel Pty Ltd, Broadcom or Oracle.

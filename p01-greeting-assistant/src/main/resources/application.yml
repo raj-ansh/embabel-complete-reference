@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: greeting-assistant
+  mvc:
+    problemdetails:
+      enabled: true
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+
+embabel:
+  models:
+    default-llm: ${NORTHWIND_DEFAULT_LLM}
+  agent:
+    platform:
+      rest:
+        process-kill-enabled: false
+        process-status-enabled: false
+        process-events-enabled: false
+
+northwind:
+  greeting:
+    brand-voice: warm, outdoorsy and concise; never pushy or salesy
+    max-words: 40
+    temperature: 0.7

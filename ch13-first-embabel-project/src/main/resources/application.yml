@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: northwind-agents
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+
+embabel:
+  models:
+    # The model agents use unless an action asks for another.
+    # Set NORTHWIND_DEFAULT_LLM to a model your provider offers (for Ollama: a model you have pulled).
+    default-llm: ${NORTHWIND_DEFAULT_LLM}

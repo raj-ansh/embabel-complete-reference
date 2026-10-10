@@ -1,0 +1,15 @@
+target/
+build/
+.gradle/
+*.log
+cp.txt
+tree.txt
+.env
+.idea/
+.vscode/
+*.iml
+cp.txt
+data/
+hs_err_*.log
+_api-check/
+replay_pid*.log

@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: agentic-rag-assistant
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+
+embabel:
+  models:
+    default-llm: ${NORTHWIND_DEFAULT_LLM}
+    default-embedding-model: ${NORTHWIND_EMBEDDING_MODEL:nomic-embed-text}
+    llms:
+      balanced: ${NORTHWIND_LLM_BALANCED:${NORTHWIND_DEFAULT_LLM}}
+  agent:
+    platform:
+      toolloop:
+        max-iterations: 8
+      rest:
+        process-kill-enabled: false
+        process-status-enabled: false
+        process-events-enabled: false
+
+northwind:
+  rag:
+    embedder: model                       # model | hashing
+    manuals-dir: ${NORTHWIND_MANUALS_DIR:manuals}

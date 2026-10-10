@@ -1,0 +1,10 @@
+spring:
+  application:
+    name: spring-ai-fundamentals
+  ai:
+    openai:
+      api-key: ${OPENAI_API_KEY}          # from the environment, never committed
+      chat:
+        options:
+          model: ${OPENAI_CHAT_MODEL}     # choose a current model from your provider
+          temperature: 0.2

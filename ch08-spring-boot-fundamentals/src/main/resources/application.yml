@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: catalog-service
+  mvc:
+    problemdetails:
+      enabled: true          # RFC 9457 bodies for framework errors too (e.g. validation)
+
+northwind:
+  catalog:
+    store-name: NorthWind Outfitters
+    max-results: 20
+    currency: USD
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info     # expose only what you need
+  endpoint:
+    health:
+      show-details: when-authorized

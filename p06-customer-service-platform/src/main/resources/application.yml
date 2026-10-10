@@ -1,0 +1,21 @@
+spring:
+  application:
+    name: customer-service-platform
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+
+embabel:
+  models:
+    default-llm: ${NORTHWIND_DEFAULT_LLM}
+    llms:
+      cheap: ${NORTHWIND_LLM_CHEAP:${NORTHWIND_DEFAULT_LLM}}
+      balanced: ${NORTHWIND_LLM_BALANCED:${NORTHWIND_DEFAULT_LLM}}
+  agent:
+    platform:
+      toolloop:
+        max-iterations: 6
+      rest:
+        process-kill-enabled: false
+        process-status-enabled: false
+        process-events-enabled: false

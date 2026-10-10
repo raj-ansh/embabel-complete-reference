@@ -1,0 +1,12 @@
+[
+  {"id": "T-4102", "question": "Headlamp won't turn on after a winter trip",
+   "answer": "It was in lock mode. Holding the button for 5 seconds unlocked it."},
+  {"id": "T-4177", "question": "Water inside the tent every morning but no rain overnight",
+   "answer": "Condensation, not a leak. Customer opened both vents and pitched away from the river; problem solved."},
+  {"id": "T-4230", "question": "Stove flame is weak on a cold morning",
+   "answer": "Cold canister. Warming the canister in the sleeping bag and using winter-blend gas fixed it."},
+  {"id": "T-4318", "question": "Tent pole snapped in high wind",
+   "answer": "Repair sleeve used on the trail; replacement pole section sent free under warranty."},
+  {"id": "T-4401", "question": "Stove igniter clicks but does not light",
+   "answer": "Igniter electrode was bent. Lit with a match as the manual describes; igniter replaced under warranty."}
+]

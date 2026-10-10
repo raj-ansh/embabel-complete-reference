@@ -1,0 +1,31 @@
+# Shared defaults for every environment. No secrets here: only ${…} placeholders.
+spring:
+  application:
+    name: northwind-agents
+
+embabel:
+  models:
+    # Agents refer to roles, never to model names. Each role maps to a model per environment.
+    default-llm: balanced
+    llms:
+      cheap: ${NORTHWIND_LLM_CHEAP}
+      balanced: ${NORTHWIND_LLM_BALANCED}
+      best: ${NORTHWIND_LLM_BEST}
+  agent:
+    platform:
+      name: northwind-agents
+      toolloop:
+        max-iterations: 10            # tighter than the default of 20: a runaway loop costs money
+      rest:
+        process-kill-enabled: false   # built-in endpoints are opt-in for us (see Chapter 84)
+        process-status-enabled: false
+        process-events-enabled: false
+
+# Our own agent settings, bound to NorthwindAgentProperties and validated at startup
+northwind:
+  agents:
+    support-email: support@northwind.example
+    reply-max-words: 120
+    returns:
+      auto-approve-limit: 200.00
+      currency: USD

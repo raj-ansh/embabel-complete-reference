@@ -1,0 +1,19 @@
+# Developer laptops: a local model for every role, chatty logs. Activate with SPRING_PROFILES_ACTIVE=local
+spring:
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+
+embabel:
+  models:
+    llms:
+      cheap: ${NORTHWIND_LOCAL_LLM}
+      balanced: ${NORTHWIND_LOCAL_LLM}
+      best: ${NORTHWIND_LOCAL_LLM}
+  agent:
+    logging:
+      personality: hitchhiker        # themed log messages: harmless fun for development only
+
+logging:
+  level:
+    com.northwind: debug

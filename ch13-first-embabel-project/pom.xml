@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Use the Spring Boot version that your Embabel release is built against -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>4.1.1</version>
+        <relativePath/>
+    </parent>
+
+    <groupId>com.northwind</groupId>
+    <artifactId>northwind-agents</artifactId>
+    <version>1.0.0</version>
+    <name>NorthWind Agents</name>
+
+    <properties>
+        <java.version>21</java.version>
+        <!-- One property controls every Embabel artifact: never mix versions -->
+        <embabel-agent.version>1.5.3</embabel-agent.version>
+    </properties>
+
+    <dependencies>
+        <!-- The agent platform: auto-configuration, AgentPlatform, annotations, Ai -->
+        <dependency>
+            <groupId>com.embabel.agent</groupId>
+            <artifactId>embabel-agent-starter</artifactId>
+            <version>${embabel-agent.version}</version>
+        </dependency>
+
+        <!-- Fakes for unit tests and a Spring Boot base class for integration tests -->
+        <dependency>
+            <groupId>com.embabel.agent</groupId>
+            <artifactId>embabel-agent-test</artifactId>
+            <version>${embabel-agent.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <!-- Choose a model provider at build time: mvn -Popenai … (Ollama is the default) -->
+    <profiles>
+        <profile>
+            <id>ollama</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>com.embabel.agent</groupId>
+                    <artifactId>embabel-agent-starter-ollama</artifactId>
+                    <version>${embabel-agent.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>openai</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.embabel.agent</groupId>
+                    <artifactId>embabel-agent-starter-openai</artifactId>
+                    <version>${embabel-agent.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>anthropic</id>
+            <dependencies>
+                <dependency>
+                    <groupId>com.embabel.agent</groupId>
+                    <artifactId>embabel-agent-starter-anthropic</artifactId>
+                    <version>${embabel-agent.version}</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+</project>

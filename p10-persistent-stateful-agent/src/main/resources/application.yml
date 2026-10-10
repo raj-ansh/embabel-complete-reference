@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: persistent-stateful-agent
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+  datasource:
+    # Any JDBC database works; H2 in PostgreSQL mode accepts Embabel's PostgreSQL DDL as-is.
+    url: ${NORTHWIND_DB_URL:jdbc:h2:file:./data/content;MODE=PostgreSQL;AUTO_SERVER=TRUE}
+    username: ${NORTHWIND_DB_USER:sa}
+    password: ${NORTHWIND_DB_PASSWORD:}
+  sql:
+    init:
+      mode: always
+      schema-locations: classpath:com/embabel/agent/jdbc/schema.sql   # the DDL shipped in embabel-agent-jdbc
+
+embabel:
+  models:
+    default-llm: ${NORTHWIND_DEFAULT_LLM}
+    llms:
+      writer: ${NORTHWIND_LLM_WRITER:${NORTHWIND_DEFAULT_LLM}}
+  agent:
+    platform:
+      persistence:
+        provider: jdbc                  # activates JdbcAgentProcessSnapshotStore
+        checkpoint-policy: LIFECYCLE    # snapshot WAITING and finished processes
+      rest:
+        process-kill-enabled: false
+        process-status-enabled: false
+        process-events-enabled: false

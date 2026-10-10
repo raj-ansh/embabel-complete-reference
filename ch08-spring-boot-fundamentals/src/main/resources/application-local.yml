@@ -1,0 +1,13 @@
+# Active only with --spring.profiles.active=local
+northwind:
+  catalog:
+    max-results: 5
+
+management:
+  endpoint:
+    health:
+      show-details: always       # convenient locally, never in production
+
+logging:
+  level:
+    com.northwind: debug

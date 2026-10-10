@@ -1,0 +1,13 @@
+spring:
+  application:
+    name: returns-agent
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+
+embabel:
+  models:
+    default-llm: ${NORTHWIND_DEFAULT_LLM}
+    llms:
+      cheap: ${NORTHWIND_LLM_CHEAP:${NORTHWIND_DEFAULT_LLM}}
+      balanced: ${NORTHWIND_LLM_BALANCED:${NORTHWIND_DEFAULT_LLM}}

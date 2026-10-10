@@ -1,0 +1,12 @@
+spring:
+  application:
+    name: campfire-jokes
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+
+embabel:
+  models:
+    default-llm: ${NORTHWIND_DEFAULT_LLM}
+    llms:
+      cheap: ${NORTHWIND_LLM_CHEAP:${NORTHWIND_DEFAULT_LLM}}   # falls back to the default model

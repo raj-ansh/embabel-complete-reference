@@ -1,0 +1,35 @@
+spring:
+  application:
+    name: tool-using-agent
+  mvc:
+    problemdetails:
+      enabled: true
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+  datasource:
+    url: jdbc:h2:mem:northwind;DB_CLOSE_DELAY=-1
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+
+embabel:
+  models:
+    default-llm: ${NORTHWIND_DEFAULT_LLM}
+    llms:
+      balanced: ${NORTHWIND_LLM_BALANCED:${NORTHWIND_DEFAULT_LLM}}
+  agent:
+    platform:
+      toolloop:
+        max-iterations: 8          # a bounded tool loop per model call
+      rest:
+        process-kill-enabled: false
+        process-status-enabled: false
+        process-events-enabled: false
+
+northwind:
+  policies:
+    dir: ${NORTHWIND_POLICIES_DIR:policies}
+  carrier:
+    base-url: ${NORTHWIND_CARRIER_URL:https://carrier.example.invalid}
+    timeout: 5s

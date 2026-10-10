@@ -1,0 +1,18 @@
+# Production: model names and keys come from the deployment environment or a secret manager.
+embabel:
+  agent:
+    platform:
+      models:
+        openai:
+          max-attempts: 5              # fewer, faster retries; let the caller decide what to do next
+          backoff-millis: 2000
+
+northwind:
+  agents:
+    returns:
+      auto-approve-limit: ${NORTHWIND_RETURNS_AUTO_APPROVE_LIMIT:100.00}
+
+logging:
+  level:
+    root: info
+    com.northwind: info
