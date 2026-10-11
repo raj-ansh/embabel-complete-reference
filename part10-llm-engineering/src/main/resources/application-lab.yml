@@ -1,0 +1,8 @@
+# Offline lab models (com.northwind.llm.lab). Run with --spring.profiles.active=lab
+embabel:
+  models:
+    default-llm: lab-standard
+    llms:
+      cheap: lab-mini
+      balanced: lab-standard
+      best: lab-reasoner

@@ -47,7 +47,15 @@ Every folder is a standalone build. The examples were compiled and their tests r
 | `p08-agentic-rag-assistant` | 60, 61, 63 | **P8** Agentic RAG Knowledge Assistant |
 | `p10-persistent-stateful-agent` | 64–69 | **P10** Persistent Stateful Agent (`@State`, JDBC persistence, snapshots) |
 
-Volume 3 code (Chapters 70–122, projects P11–P15) will be added when that volume is published.
+### Volume 3: LLM Engineering, Safety, MCP, Production and Enterprise
+
+| Folder | Chapter | What it shows |
+|---|---|---|
+| `part10-llm-engineering` | 70–80 | Model choice and mixing, provider setup, custom models and BYOK, prompt contributors and templates, structured output, SSE streaming, reasoning, tool-loop callbacks and auditing, cost tracking and budgets |
+
+`part10-llm-engineering` runs entirely offline: its `lab` Spring profile registers three scripted "lab" models as real Embabel `LlmService` beans, so prompts, tool calls, retries, streaming and cost events go through Embabel's genuine pipeline without an API key. The replies are scripted, not generated.
+
+More Volume 3 code (Chapters 81–122, projects P11–P15) will be added as the chapters are written.
 
 ## Running the tests
 

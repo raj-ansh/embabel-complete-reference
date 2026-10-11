@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: llm-engineering
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+
+embabel:
+  models:
+    default-llm: ${NORTHWIND_DEFAULT_LLM}
+    # roles: the code asks for a role, configuration picks the model
+    llms:
+      cheap: ${NORTHWIND_LLM_CHEAP:${NORTHWIND_DEFAULT_LLM}}
+      balanced: ${NORTHWIND_LLM_BALANCED:${NORTHWIND_DEFAULT_LLM}}
+      best: ${NORTHWIND_LLM_BEST:${NORTHWIND_DEFAULT_LLM}}
+  agent:
+    platform:
+      rest:
+        process-kill-enabled: false
+        process-status-enabled: false
+        process-events-enabled: false
+
+northwind:
+  models:                                   # per-step model choices, bound to LlmOptions (Chapter 71)
+    triage:
+      role: cheap
+      temperature: 0.0
+      max-tokens: 300
+    reply:
+      role: balanced
+      temperature: 0.4
+    sensitive-reply:
+      role: best
+      temperature: 0.2
+      timeout: 60s
+    reply-fallbacks: [ balanced, cheap ]
+  budgets:                                  # per-tenant spending limits in USD (Chapter 80)
+    default-monthly-usd: 50.00
+    monthly-usd:
+      acme-outdoors: 200.00
