@@ -8,5 +8,3 @@ northwind:
   security:
     # lab only: signs test tokens; production uses spring.security.oauth2.resourceserver.jwt.issuer-uri
     lab-jwt-secret: lab-secret-for-offline-examples-only-0123456789
-    # where clients get tokens; announced by /.well-known/oauth-protected-resource (Chapter 88)
-    authorization-server: https://login.northwind.example

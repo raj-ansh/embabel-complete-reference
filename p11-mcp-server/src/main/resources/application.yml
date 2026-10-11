@@ -1,3 +1,6 @@
+server:
+  port: 8081                               # P12 expects NorthWind's MCP server here
+
 spring:
   application:
     name: northwind-mcp-server
@@ -10,6 +13,11 @@ spring:
         version: 1.0.0
         type: SYNC
         protocol: STREAMABLE                 # served at /mcp
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${NORTHWIND_ISSUER_URI:https://login.northwind.example}   # lab profile: LabTokens
 
 embabel:
   models:
@@ -22,6 +30,11 @@ embabel:
         process-kill-enabled: false
         process-status-enabled: false
         process-events-enabled: false
+
+northwind:
+  security:
+    # where clients get tokens: announced at /.well-known/oauth-protected-resource (Chapter 88)
+    authorization-server: ${NORTHWIND_ISSUER_URI:https://login.northwind.example}
 
 management:
   endpoints:

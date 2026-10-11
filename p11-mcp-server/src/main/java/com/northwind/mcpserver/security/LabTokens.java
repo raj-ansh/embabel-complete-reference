@@ -2,6 +2,7 @@ package com.northwind.mcpserver.security;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -38,6 +39,13 @@ public class LabTokens {
     @Bean
     JwtDecoder labJwtDecoder() {
         return NimbusJwtDecoder.withSecretKey(key).build();
+    }
+
+    /** For trying the server with an MCP client: a ten-minute token, printed at startup in the lab profile only. */
+    @Bean
+    ApplicationRunner printLabToken() {
+        return args -> System.out.println("Lab token (orders:read products:read a2a:invoke), valid 10 minutes: "
+                + tokenFor("lab-user", "orders:read products:read a2a:invoke"));
     }
 
     public String tokenFor(String client, String authorities) {
