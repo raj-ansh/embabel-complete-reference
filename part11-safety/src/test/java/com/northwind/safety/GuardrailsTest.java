@@ -53,6 +53,28 @@ class GuardrailsTest extends LabTest {
     }
 
     @Test
+    void errorSeverityIsReportedButDoesNotBlock() {
+        var errorOnly = new com.embabel.agent.api.validation.guardrails.UserInputGuardRail() {
+            @Override public String getName() { return "ErrorOnly"; }
+            @Override public String getDescription() { return "Always reports an ERROR"; }
+            @Override public com.embabel.common.core.validation.ValidationResult validate(String input,
+                    com.embabel.agent.core.Blackboard blackboard) {
+                return com.northwind.safety.guard.Verdicts.flag("TEST", "an error-level finding",
+                        com.embabel.common.core.validation.ValidationSeverity.ERROR);
+            }
+        };
+        String reply = labAssistantReply(errorOnly);
+        System.out.println("ERROR severity -> call continued, model calls: " + model().received().size() + ", reply: " + reply);
+    }
+
+    @Autowired com.embabel.agent.api.common.Ai ai;
+
+    private String labAssistantReply(com.embabel.agent.api.validation.guardrails.GuardRail guard) {
+        return ai.withLlmByRole("balanced").withGuardRails(guard)
+                .generateText("Write a short reply to the customer message between the <message> tags.\n<message>Hi</message>");
+    }
+
+    @Test
     void globalGuardrailRunsOnEveryCall() {
         int before = AuditInputGuardRail.CALLS.get();
         replies.reply("Do you sell tent pegs?");

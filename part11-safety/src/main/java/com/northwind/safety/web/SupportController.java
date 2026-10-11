@@ -17,13 +17,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
-
 /** Chapter 84: identity comes from the verified token; the body carries only the question. */
 @RestController
 public class SupportController {
 
     public record Ask(@NotBlank @Size(max = 2000) String message) {
+    }
+
+    public record AssistantReply(String caller, String answer) {
     }
 
     private final SupportAssistant assistant;
@@ -35,9 +36,9 @@ public class SupportController {
     }
 
     @PostMapping("/api/support/refund-request")
-    public Map<String, String> refundRequest(@AuthenticationPrincipal Jwt token, @Valid @RequestBody Ask ask) {
+    public AssistantReply refundRequest(@AuthenticationPrincipal Jwt token, @Valid @RequestBody Ask ask) {
         CallerIdentity caller = CallerIdentity.from(token);
-        return Map.of("caller", caller.userId(), "answer", assistant.refundRequest(caller.userId(), ask.message()));
+        return new AssistantReply(caller.userId(), assistant.refundRequest(caller.userId(), ask.message()));
     }
 
     @PostMapping("/api/refunds/{orderNumber}/approve")
