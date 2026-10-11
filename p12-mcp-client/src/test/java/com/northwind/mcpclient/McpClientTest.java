@@ -18,6 +18,7 @@ import org.springframework.test.context.DynamicPropertyRegistry;
 import org.springframework.test.context.DynamicPropertySource;
 
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -77,5 +78,14 @@ class McpClientTest {
         System.out.println("tool by name: " + mcpTools.requiredToolByName("stockLevel").getDefinition().getName());
         System.out.println("answer: " + assistant.askWithOneTool("Is the Ridgeline tent in stock?"));
         System.out.println("missing tool: " + mcpTools.toolByName("refundEverything"));
+    }
+
+    @Test
+    void factoryBuildsAProgressiveFacade() {
+        var catalogue = mcpTools.unfoldingByName("northwindCatalogue",
+                "NorthWind catalogue: stock levels and product details. Invoke to see the tools.",
+                Set.of("stockLevel", "productDetails"));
+        System.out.println("facade: " + catalogue.getDefinition().getName() + " - " + catalogue.getDefinition().getDescription());
+        System.out.println("inner tools: " + catalogue.getInnerTools().stream().map(t -> t.getDefinition().getName()).sorted().toList());
     }
 }
