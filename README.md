@@ -52,10 +52,11 @@ Every folder is a standalone build. The examples were compiled and their tests r
 | Folder | Chapter | What it shows |
 |---|---|---|
 | `part10-llm-engineering` | 70–80 | Model choice and mixing, provider setup, custom models and BYOK, prompt contributors and templates, structured output, SSE streaming, reasoning, tool-loop callbacks and auditing, cost tracking and budgets |
+| `part11-safety` | 81–84 | Guardrails, prompt/tool/indirect injection and their defences, PII pseudonymisation, RAG poisoning, JWT security, `@SecureAgentTool`, rate limiting |
 
-`part10-llm-engineering` runs entirely offline: its `lab` Spring profile registers three scripted "lab" models as real Embabel `LlmService` beans, so prompts, tool calls, retries, streaming and cost events go through Embabel's genuine pipeline without an API key. The replies are scripted, not generated.
+`part10-llm-engineering` and `part11-safety` run entirely offline. Their `lab` Spring profile registers scripted "lab" models (in Part XI, a deliberately naive one that obeys injected instructions) as real Embabel `LlmService` beans, so prompts, tool calls, retries, streaming and cost events go through Embabel's genuine pipeline without an API key. The replies are scripted, not generated.
 
-More Volume 3 code (Chapters 81–122, projects P11–P15) will be added as the chapters are written.
+More Volume 3 code (Chapters 85–122, projects P11–P15) will be added as the chapters are written.
 
 ## Running the tests
 
