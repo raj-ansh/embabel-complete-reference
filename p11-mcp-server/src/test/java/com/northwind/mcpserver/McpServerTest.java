@@ -57,6 +57,7 @@ class McpServerTest {
     void listsToolsAndPrompts() {
         client.listTools().tools().forEach(t -> System.out.println("tool:   " + t.name() + " - " + t.description()));
         client.listPrompts().prompts().forEach(p -> System.out.println("prompt: " + p.name() + " - " + p.description()));
+        client.listResources().resources().forEach(r -> System.out.println("resource: " + r.uri() + " (" + r.mimeType() + ") - " + r.description()));
         assertThat(client.listTools().tools()).extracting(McpSchema.Tool::name)
                 .contains("orderStatus", "productAdvice", "stockLevel", "productDetails");
     }
