@@ -4,6 +4,7 @@ import com.embabel.agent.api.annotation.AchievesGoal;
 import com.embabel.agent.api.annotation.Action;
 import com.embabel.agent.api.annotation.Agent;
 import com.embabel.agent.api.annotation.Export;
+import com.embabel.agent.mcpserver.security.SecureAgentTool;
 import com.northwind.mcpserver.domain.Catalog.OrderQuery;
 import com.northwind.mcpserver.domain.Catalog.OrderStatus;
 
@@ -14,6 +15,7 @@ import java.util.Map;
  * typed answer from an agent whose plan happens to be one step.
  */
 @Agent(description = "Look up the delivery status of a NorthWind order")
+@SecureAgentTool("hasAuthority('orders:read')")              // Chapter 88: every action in this agent
 public class OrderStatusAgent {
 
     private final Map<String, OrderStatus> orders = Map.of(

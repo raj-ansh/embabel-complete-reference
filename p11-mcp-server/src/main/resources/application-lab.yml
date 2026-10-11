@@ -3,3 +3,8 @@ embabel:
     default-llm: lab-balanced
     llms:
       balanced: lab-balanced
+
+northwind:
+  security:
+    # lab only: signs test tokens; production uses spring.security.oauth2.resourceserver.jwt.issuer-uri
+    lab-jwt-secret: lab-secret-for-offline-examples-only-0123456789

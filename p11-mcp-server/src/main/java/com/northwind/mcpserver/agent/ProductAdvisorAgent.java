@@ -4,6 +4,7 @@ import com.embabel.agent.api.annotation.AchievesGoal;
 import com.embabel.agent.api.annotation.Action;
 import com.embabel.agent.api.annotation.Agent;
 import com.embabel.agent.api.annotation.Export;
+import com.embabel.agent.mcpserver.security.SecureAgentTool;
 import com.embabel.agent.api.common.OperationContext;
 import com.northwind.mcpserver.domain.Catalog.ProductAdvice;
 import com.northwind.mcpserver.domain.Catalog.TripQuestion;
@@ -14,6 +15,7 @@ import com.northwind.mcpserver.tools.CatalogTools;
  * cares that an agent with its own model, prompt and tools answers it.
  */
 @Agent(description = "Recommend NorthWind products for an outdoor trip")
+@SecureAgentTool("hasAuthority('products:read')")            // Chapter 88
 public class ProductAdvisorAgent {
 
     @AchievesGoal(description = "Recommend in-stock NorthWind products for an outdoor trip described in plain English",

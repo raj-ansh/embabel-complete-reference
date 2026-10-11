@@ -1,0 +1,28 @@
+spring:
+  application:
+    name: northwind-shop-assistant
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+    mcp:
+      client:
+        type: SYNC
+        request-timeout: 20s
+        streamable-http:
+          connections:
+            northwind:                        # the P11 server
+              url: ${NORTHWIND_MCP_URL:http://localhost:8081}
+
+embabel:
+  models:
+    default-llm: ${NORTHWIND_DEFAULT_LLM}
+    llms:
+      balanced: ${NORTHWIND_LLM_BALANCED:${NORTHWIND_DEFAULT_LLM}}
+  agent:
+    platform:
+      threading:
+        shared: true                  # use applicationTaskExecutor, so TokenPropagation applies
+      rest:
+        process-kill-enabled: false
+        process-status-enabled: false
+        process-events-enabled: false

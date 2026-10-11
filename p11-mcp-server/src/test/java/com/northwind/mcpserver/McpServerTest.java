@@ -4,9 +4,11 @@ import io.modelcontextprotocol.client.McpClient;
 import io.modelcontextprotocol.client.McpSyncClient;
 import io.modelcontextprotocol.client.transport.HttpClientStreamableHttpTransport;
 import io.modelcontextprotocol.spec.McpSchema;
+import com.northwind.mcpserver.security.LabTokens;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.test.context.ActiveProfiles;
@@ -22,12 +24,17 @@ import static org.assertj.core.api.Assertions.assertThat;
 class McpServerTest {
 
     @LocalServerPort int port;
+    @Autowired LabTokens tokens;
 
     McpSyncClient client;
 
     @BeforeEach
     void connect() {
-        client = McpClient.sync(HttpClientStreamableHttpTransport.builder("http://localhost:" + port).build())
+        String token = tokens.tokenFor("shop-assistant", "orders:read products:read");
+        client = McpClient.sync(HttpClientStreamableHttpTransport.builder("http://localhost:" + port)
+                        .httpRequestCustomizer((request, method, uri, body, context) ->
+                                request.header("Authorization", "Bearer " + token))
+                        .build())
                 .requestTimeout(Duration.ofSeconds(30))
                 .build();
         var init = client.initialize();
