@@ -53,10 +53,14 @@ Every folder is a standalone build. The examples were compiled and their tests r
 |---|---|---|
 | `part10-llm-engineering` | 70–80 | Model choice and mixing, provider setup, custom models and BYOK, prompt contributors and templates, structured output, SSE streaming, reasoning, tool-loop callbacks and auditing, cost tracking and budgets |
 | `part11-safety` | 81–84 | Guardrails, prompt/tool/indirect injection and their defences, PII pseudonymisation, RAG poisoning, JWT security, `@SecureAgentTool`, rate limiting |
+| `p11-mcp-server` | 85, 86, 88, 89 | **P11** Embabel MCP Server: exported goals, plain tools and a resource over Streamable HTTP; JWT security, OAuth discovery metadata; the same agents over A2A, secured |
+| `p12-mcp-client` | 87, 88 | **P12** Embabel MCP Client: allowlisted `McpToolGroup`, metadata allowlist, `McpToolFactory`, per-user token relay, lazy initialisation, tested against a misbehaving stand-in server |
 
-`part10-llm-engineering` and `part11-safety` run entirely offline. Their `lab` Spring profile registers scripted "lab" models (in Part XI, a deliberately naive one that obeys injected instructions) as real Embabel `LlmService` beans, so prompts, tool calls, retries, streaming and cost events go through Embabel's genuine pipeline without an API key. The replies are scripted, not generated.
+`part10-llm-engineering`, `part11-safety`, `p11-mcp-server` and `p12-mcp-client` run entirely offline. Their `lab` Spring profile registers scripted "lab" models (in Part XI, a deliberately naive one that obeys injected instructions) as real Embabel `LlmService` beans, so prompts, tool calls, retries, streaming and cost events go through Embabel's genuine pipeline without an API key. The replies are scripted, not generated.
 
-More Volume 3 code (Chapters 85–122, projects P11–P15) will be added as the chapters are written.
+P11 and P12 talk over real HTTP with the MCP Java SDK. P11's tests sign their own JWTs, and `mvn spring-boot:run -Dspring-boot.run.profiles=lab` in `p11-mcp-server` prints a short-lived token for trying the server with any MCP client.
+
+More Volume 3 code (Chapters 90–122, projects P13–P15) will be added as the chapters are written.
 
 ## Running the tests
 
