@@ -62,7 +62,8 @@ class A2aTest {
     void agentCard() throws Exception {
         var response = get("/a2a/.well-known/agent.json");
         JsonNode card = json.readTree(response.body());
-        System.out.println("agent card: HTTP " + response.statusCode() + ", " + card.get("name").asString() + ", "
+        System.out.println("agent card: HTTP " + response.statusCode() + ", " + card.get("name").asString()
+                + " (" + card.get("description").asString() + "), provider "
                 + card.at("/provider/organization").asString() + " " + card.get("version").asString()
                 + ", protocol " + card.get("protocolVersion").asString() + ", url " + card.get("url").asString().replaceAll(":\\d+", ":PORT"));
         card.get("skills").forEach(skill -> System.out.println("  skill: " + skill.get("name").asString()

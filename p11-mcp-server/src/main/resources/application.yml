@@ -18,6 +18,7 @@ spring:
       resourceserver:
         jwt:
           issuer-uri: ${NORTHWIND_ISSUER_URI:https://login.northwind.example}   # lab profile: LabTokens
+          audiences: ${NORTHWIND_MCP_AUDIENCE:https://mcp.northwind.example}  # tokens issued for this server only
 
 embabel:
   models:
@@ -26,6 +27,8 @@ embabel:
       balanced: ${NORTHWIND_LLM_BALANCED:${NORTHWIND_DEFAULT_LLM}}
   agent:
     platform:
+      name: northwind-agents                # shown on the A2A agent card (Chapter 89)
+      description: NorthWind Outfitters order, catalogue and finance agents
       rest:
         process-kill-enabled: false
         process-status-enabled: false
