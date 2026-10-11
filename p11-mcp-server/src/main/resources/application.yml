@@ -1,0 +1,30 @@
+spring:
+  application:
+    name: northwind-mcp-server
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+    mcp:
+      server:
+        name: northwind
+        version: 1.0.0
+        type: SYNC
+        protocol: STREAMABLE                 # served at /mcp
+
+embabel:
+  models:
+    default-llm: ${NORTHWIND_DEFAULT_LLM}
+    llms:
+      balanced: ${NORTHWIND_LLM_BALANCED:${NORTHWIND_DEFAULT_LLM}}
+  agent:
+    platform:
+      rest:
+        process-kill-enabled: false
+        process-status-enabled: false
+        process-events-enabled: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

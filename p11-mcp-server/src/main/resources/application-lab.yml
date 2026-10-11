@@ -1,0 +1,5 @@
+embabel:
+  models:
+    default-llm: lab-balanced
+    llms:
+      balanced: lab-balanced
