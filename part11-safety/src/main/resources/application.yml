@@ -1,0 +1,26 @@
+spring:
+  application:
+    name: safety
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+
+embabel:
+  models:
+    default-llm: ${NORTHWIND_DEFAULT_LLM}
+    llms:
+      balanced: ${NORTHWIND_LLM_BALANCED:${NORTHWIND_DEFAULT_LLM}}
+  agent:
+    # Chapter 81: guardrails applied to every model call, by class name
+    guardrails:
+      user-input: com.northwind.safety.guard.AuditInputGuardRail
+      fail-on-error: true
+    platform:
+      rest:
+        process-kill-enabled: false
+        process-status-enabled: false
+        process-events-enabled: false
+
+northwind:
+  security:
+    requests-per-minute: 30                 # per authenticated user (Chapter 84)

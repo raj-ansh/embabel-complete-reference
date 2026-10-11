@@ -1,0 +1,11 @@
+# Offline lab model (com.northwind.safety.lab). Run with --spring.profiles.active=lab
+embabel:
+  models:
+    default-llm: lab-assistant
+    llms:
+      balanced: lab-assistant
+
+northwind:
+  security:
+    # lab only: signs test tokens; production uses spring.security.oauth2.resourceserver.jwt.issuer-uri
+    lab-jwt-secret: lab-secret-for-offline-examples-only-0123456789
