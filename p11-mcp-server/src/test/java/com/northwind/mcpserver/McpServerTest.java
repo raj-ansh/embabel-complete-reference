@@ -73,6 +73,7 @@ class McpServerTest {
                 Map.of("orderNumber", "NW-10442")));
         System.out.println("orderStatus -> " + text(result));
         System.out.println("structured content: " + result.structuredContent() + ", isError: " + result.isError());
+        assertThat(result.isError()).isFalse();
     }
 
     @Test
@@ -80,6 +81,7 @@ class McpServerTest {
         var result = client.callTool(new McpSchema.CallToolRequest("productAdvice",
                 Map.of("trip", "Two nights in the Lake District in May, two people")));
         System.out.println("productAdvice -> " + text(result));
+        assertThat(result.isError()).isFalse();
     }
 
     @Test

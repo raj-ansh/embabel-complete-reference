@@ -17,11 +17,13 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 import java.time.Instant;
+import java.util.List;
 
 /**
  * Chapter 88, lab profile only: tokens signed with a shared secret, so the server can be tested without an
  * identity provider. In production, set spring.security.oauth2.resourceserver.jwt.issuer-uri instead.
- * Scopes in the "scope" claim become authorities such as "orders:read".
+ * Embabel's MCP security reads authorities from an "authorities" claim, with no prefix: a token carrying
+ * "orders:read" there satisfies hasAuthority('orders:read'). A standard "scope" claim is ignored.
  */
 @Configuration
 @Profile("lab")
@@ -38,10 +40,10 @@ public class LabTokens {
         return NimbusJwtDecoder.withSecretKey(key).build();
     }
 
-    public String tokenFor(String client, String scopes) {
+    public String tokenFor(String client, String authorities) {
         var claims = JwtClaimsSet.builder()
                 .subject(client)
-                .claim("scope", scopes)
+                .claim("authorities", List.of(authorities.split(" ")))
                 .issuedAt(Instant.now())
                 .expiresAt(Instant.now().plusSeconds(600))
                 .build();
