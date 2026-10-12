@@ -11,6 +11,8 @@ import com.northwind.production.domain.Issues.OrderFacts;
 import com.northwind.production.domain.Issues.Resolution;
 import com.northwind.production.domain.Issues.Triage;
 import com.northwind.production.service.OrderService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Part XIII: resolves a customer's problem with an order. One service call, then two model calls (triage with
@@ -22,6 +24,8 @@ public class IssueResolutionAgent {
 
     /** Blackboard name of the customer-safe explanation when the agent stops early (Chapter 94). */
     public static final String REFUSAL = "refusal";
+
+    private static final Logger log = LoggerFactory.getLogger(IssueResolutionAgent.class);
 
     private final OrderService orders;
 
@@ -44,6 +48,7 @@ public class IssueResolutionAgent {
 
     @Action(description = "Look up the order")
     public OrderFacts lookUp(IssueReport issue, OperationContext context) {
+        log.info("Looking up order {}", issue.orderNumber());          // ids only: no message text (Chapter 93)
         return orders.find(issue.orderNumber())
                 .filter(order -> order.customerId().equals(issue.customerId()))
                 .orElseThrow(() -> {

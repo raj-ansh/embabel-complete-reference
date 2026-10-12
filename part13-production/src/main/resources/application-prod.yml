@@ -1,0 +1,28 @@
+# Production settings (Chapters 92, 93 and 102). Activate with SPRING_PROFILES_ACTIVE=prod.
+logging:                                  # logback-spring.xml switches to JSON in this profile
+  structured:
+    format:
+      console: ecs                        # one JSON object per line, MDC keys as fields
+  level:
+    root: INFO
+    com.embabel.agent.core.support.BlackboardWorldStateDeterminer: WARN   # planning state dumps
+
+spring:
+  output:
+    ansi:
+      enabled: never                      # Embabel defaults to ALWAYS: colour codes in log files
+
+management:
+  tracing:
+    sampling:
+      probability: 0.1                    # Embabel defaults to 1.0: every request traced
+  endpoint:
+    health:
+      probes:
+        enabled: true                     # /actuator/health/liveness and /readiness (Chapter 101)
+
+embabel:
+  agent:
+    platform:
+      observability:
+        capture-message-content: false    # no prompts, messages or results in spans (Chapter 92)
