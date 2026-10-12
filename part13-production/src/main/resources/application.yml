@@ -37,3 +37,6 @@ embabel.agent.platform.action-qos.default:
   backoff-millis: 500
   backoff-multiplier: 2.0
   backoff-max-interval: 2000
+
+northwind.carrier:
+  webhook-secret: ${CARRIER_WEBHOOK_SECRET:lab-carrier-secret-change-me}   # shared with the carrier (Chapter 99)
