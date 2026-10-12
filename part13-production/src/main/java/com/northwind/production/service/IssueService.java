@@ -11,11 +11,18 @@ import com.northwind.production.domain.Issues.CustomerReply;
 import com.northwind.production.domain.Issues.IssueReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import jakarta.annotation.PreDestroy;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 /**
  * Part XIII: the one place that runs the agent and turns a process's final status into an outcome that
@@ -33,9 +40,13 @@ public class IssueService {
     }
 
     private final AgentPlatform platform;
+    private final Duration drainTimeout;
+    private final Set<CompletableFuture<?>> inFlight = ConcurrentHashMap.newKeySet();
 
-    public IssueService(AgentPlatform platform) {
+    public IssueService(AgentPlatform platform,
+                        @Value("${northwind.shutdown-drain:30s}") Duration drainTimeout) {
         this.platform = platform;
+        this.drainTimeout = drainTimeout;
     }
 
     public Outcome resolve(IssueReport issue) {
@@ -53,7 +64,7 @@ public class IssueService {
      */
     public String start(IssueReport issue, ProcessOptions options) {
         AgentProcess process = platform.createAgentProcess(agent(), options, Map.of("it", issue));
-        platform.start(process);
+        track(platform.start(process));
         return process.getId();
     }
 
@@ -92,12 +103,38 @@ public class IssueService {
 
     /** Chapter 95: the same work without holding the caller's thread. */
     public CompletableFuture<Outcome> resolveAsync(IssueReport issue) {
-        return AgentInvocation.create(platform, CustomerReply.class).runAsync(issue)
+        return track(AgentInvocation.create(platform, CustomerReply.class).runAsync(issue))
                 .thenApply(IssueService::outcomeOf)
                 .exceptionally(e -> {
                     log.warn("Issue resolution failed for order {}", issue.orderNumber(), e);
                     return new Outcome(Status.FAILED, null, FAILED_MESSAGE, null);
                 });
+    }
+
+    private <T> CompletableFuture<T> track(CompletableFuture<T> work) {
+        inFlight.add(work);
+        work.whenComplete((result, error) -> inFlight.remove(work));
+        return work;
+    }
+
+    /**
+     * Chapter 101: on shutdown (every rollout), wait for agents that are still running. Spring destroys this
+     * service before the agent platform and its executor, so the work can still finish.
+     */
+    @PreDestroy
+    void drain() throws InterruptedException {
+        if (inFlight.isEmpty()) {
+            return;
+        }
+        log.info("Waiting up to {} for {} running agent(s)", drainTimeout, inFlight.size());
+        try {
+            CompletableFuture.allOf(inFlight.toArray(CompletableFuture[]::new))
+                    .get(drainTimeout.toMillis(), TimeUnit.MILLISECONDS);
+        } catch (TimeoutException e) {
+            log.warn("{} agent(s) still running at shutdown", inFlight.size());
+        } catch (java.util.concurrent.ExecutionException e) {
+            // failures are already handled per request
+        }
     }
 
     static Outcome outcomeOf(AgentProcess process) {

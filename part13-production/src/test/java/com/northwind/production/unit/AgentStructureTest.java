@@ -31,14 +31,18 @@ class AgentStructureTest {
 
     @Test
     void triageNeedsTheOrderSoTheOwnershipCheckComesFirst() {
-        var agent = new AgentMetadataReader().createAgentMetadata(new IssueResolutionAgent(mock(OrderService.class), Duration.ofSeconds(30)));
+        var instance = new IssueResolutionAgent(mock(OrderService.class), Duration.ofSeconds(30));
+        var agent = new AgentMetadataReader().createAgentMetadata(instance);
 
         for (Action action : agent.getActions()) {
-            System.out.println(shortName(action) + ": "
-                    + action.getInputs().stream().map(AgentStructureTest::typeName).sorted().collect(Collectors.joining(", "))
-                    + " -> " + action.getOutputs().stream().map(AgentStructureTest::typeName).collect(Collectors.joining(", ")));
+            String inputs = action.getInputs().stream().map(AgentStructureTest::typeName).sorted()
+                    .collect(Collectors.joining(", "));
+            String outputs = action.getOutputs().stream().map(AgentStructureTest::typeName)
+                    .collect(Collectors.joining(", "));
+            System.out.println(shortName(action) + ": " + inputs + " -> " + outputs);
         }
-        Action triage = agent.getActions().stream().filter(a -> shortName(a).equals("triage")).findFirst().orElseThrow();
+        Action triage = agent.getActions().stream()
+                .filter(a -> shortName(a).equals("triage")).findFirst().orElseThrow();
         assertThat(triage.getInputs()).extracting(AgentStructureTest::typeName).contains("OrderFacts");
         assertThat(agent.getGoals()).hasSize(1);
     }

@@ -1,0 +1,54 @@
+# Chapter 101: the issue service on Kubernetes.
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: issue-service
+  labels: { app: issue-service }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: issue-service }
+  template:
+    metadata:
+      labels: { app: issue-service }
+    spec:
+      terminationGracePeriodSeconds: 60          # let running agents finish (see readiness below)
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+        - name: issue-service
+          image: northwind/issue-service:1.0.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+            - name: NORTHWIND_DEFAULT_LLM
+              valueFrom: { configMapKeyRef: { name: issue-service, key: default-llm } }
+            - name: NORTHWIND_LLM_CHEAP
+              valueFrom: { configMapKeyRef: { name: issue-service, key: cheap-llm } }
+            - name: OPENAI_API_KEY
+              valueFrom: { secretKeyRef: { name: model-provider, key: openai-api-key } }
+            - name: CARRIER_WEBHOOK_SECRET
+              valueFrom: { secretKeyRef: { name: carrier-webhook, key: secret } }
+          resources:
+            requests: { cpu: "500m", memory: "768Mi" }
+            limits: { cpu: "2", memory: "1Gi" }   # Java 25 sizes its default pools from this limit
+          startupProbe:
+            httpGet: { path: /actuator/health/liveness, port: 8080 }
+            periodSeconds: 5
+            failureThreshold: 24                   # up to two minutes to start
+          livenessProbe:
+            httpGet: { path: /actuator/health/liveness, port: 8080 }
+            periodSeconds: 10
+          readinessProbe:
+            httpGet: { path: /actuator/health/readiness, port: 8080 }
+            periodSeconds: 5
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }
+      volumes:
+        - { name: tmp, emptyDir: {} }

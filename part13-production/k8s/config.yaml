@@ -1,0 +1,8 @@
+# Non-secret settings. Secrets (model-provider, carrier-webhook) come from your secret manager (Chapter 84).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: issue-service
+data:
+  default-llm: gpt-4.1-mini
+  cheap-llm: gpt-4.1-nano

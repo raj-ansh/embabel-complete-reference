@@ -1,0 +1,24 @@
+# Agents mostly wait for models, so CPU is a weak scaling signal; prefer a custom metric such as
+# embabel.agent.active (via a metrics adapter). CPU is shown because every cluster supports it.
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: issue-service
+spec:
+  scaleTargetRef: { apiVersion: apps/v1, kind: Deployment, name: issue-service }
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource:
+        name: cpu
+        target: { type: Utilization, averageUtilization: 70 }
+---
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: issue-service
+spec:
+  minAvailable: 1
+  selector:
+    matchLabels: { app: issue-service }

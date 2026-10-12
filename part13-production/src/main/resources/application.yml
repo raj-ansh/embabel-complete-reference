@@ -29,6 +29,7 @@ management:
 
 northwind:
   model-timeout: 20s                      # per model call (Chapter 94)
+  shutdown-drain: 30s                     # wait for running agents on shutdown (Chapter 101)
 
 # Chapter 94: Embabel's default action retry (5 attempts, backoffs growing to a minute) turned a 300 ms
 # model timeout into a three-minute request. Bound the worst case explicitly.

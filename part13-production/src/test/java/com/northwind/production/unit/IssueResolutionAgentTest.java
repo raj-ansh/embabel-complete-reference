@@ -36,8 +36,8 @@ class IssueResolutionAgentTest {
 
     /** withLlmByRole(..) records the role in the model selection criteria, not in LlmOptions.getRole(). */
     private static String role(LlmInvocation invocation) {
-        return invocation.getInteraction().getLlm().getModelSelectionCriteria() instanceof ByRoleModelSelectionCriteria byRole
-                ? byRole.getRole() : null;
+        var criteria = invocation.getInteraction().getLlm().getModelSelectionCriteria();
+        return criteria instanceof ByRoleModelSelectionCriteria byRole ? byRole.getRole() : null;
     }
 
     @Test
@@ -63,12 +63,14 @@ class IssueResolutionAgentTest {
         var context = FakeOperationContext.create();
         context.expectResponse("Sorry about this. We have refunded 129.00 GBP.");
 
-        var reply = agent.reply(issue, new Resolution(Remedy.REFUND, new BigDecimal("129.00"), "damaged item"), context);
+        var resolution = new Resolution(Remedy.REFUND, new BigDecimal("129.00"), "damaged item");
+        var reply = agent.reply(issue, resolution, context);
 
         var invocation = context.getLlmInvocations().getFirst();
         assertThat(reply.remedy()).isEqualTo(Remedy.REFUND);
         assertThat(role(invocation)).isEqualTo("balanced");
-        assertThat(invocation.getPrompt()).contains("Remedy: REFUND. Amount: 129.00 GBP", "Do not promise anything beyond");
+        assertThat(invocation.getPrompt())
+                .contains("Remedy: REFUND. Amount: 129.00 GBP", "Do not promise anything beyond");
     }
 
     @Test
@@ -82,7 +84,8 @@ class IssueResolutionAgentTest {
                 .hasMessageContaining("not found for customer C-1001");
 
         System.out.println("refusal for the customer: " + context.get(IssueResolutionAgent.REFUSAL));
-        assertThat(context.get(IssueResolutionAgent.REFUSAL)).isEqualTo("We couldn't find order NW-10577 on your account.");
+        assertThat(context.get(IssueResolutionAgent.REFUSAL))
+                .isEqualTo("We couldn't find order NW-10577 on your account.");
         assertThat(context.getLlmInvocations()).isEmpty();
         verify(orders).find("NW-10577");
     }
