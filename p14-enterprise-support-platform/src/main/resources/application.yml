@@ -1,0 +1,41 @@
+spring:
+  application:
+    name: northwind-enterprise-support
+  mvc:
+    problemdetails:
+      enabled: true
+  datasource:
+    url: jdbc:h2:mem:northwind;DB_CLOSE_DELAY=-1
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+
+embabel:
+  models:
+    default-llm: ${NORTHWIND_DEFAULT_LLM}
+    llms:
+      cheap: ${NORTHWIND_LLM_CHEAP:${NORTHWIND_DEFAULT_LLM}}
+      standard: ${NORTHWIND_LLM_STANDARD:${NORTHWIND_DEFAULT_LLM}}
+  agent:
+    guardrails:
+      user-input: com.northwind.enterprise.guard.CardNumberGuardRail   # before every model call
+    platform:
+      rest:
+        process-kill-enabled: false
+        process-status-enabled: false
+        process-events-enabled: false
+      action-qos.default:
+        max-attempts: 2
+        backoff-millis: 500
+        backoff-multiplier: 2.0
+        backoff-max-interval: 2000
+
+northwind:
+  billing:
+    url: ${NORTHWIND_BILLING_URL:http://localhost:8090}
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
