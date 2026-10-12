@@ -1,0 +1,76 @@
+spring:
+  application:
+    name: northwind-support-platform
+  mvc:
+    problemdetails:
+      enabled: true
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+    mcp:
+      server:
+        enabled: false                       # this application is an MCP client only
+      client:
+        type: SYNC
+        request-timeout: 20s
+        initialized: false                   # connect on first use (Chapter 88)
+        toolcallback:
+          enabled: false
+        streamable-http:
+          connections:
+            catalogue:
+              url: ${NORTHWIND_CATALOGUE_MCP_URL:http://localhost:8081}
+  security:
+    oauth2:
+      resourceserver:
+        jwt:
+          issuer-uri: ${NORTHWIND_ISSUER_URI:https://login.northwind.example}
+
+embabel:
+  models:
+    default-llm: ${NORTHWIND_DEFAULT_LLM}
+    llms:
+      cheap: ${NORTHWIND_LLM_CHEAP:${NORTHWIND_DEFAULT_LLM}}
+      standard: ${NORTHWIND_LLM_STANDARD:${NORTHWIND_DEFAULT_LLM}}
+  agent:
+    guardrails:
+      user-input: com.northwind.platform.guard.CardNumberGuardRail   # before every model call (Chapter 81)
+    platform:
+      tools:
+        lazy-init: true
+      threading:
+        shared: true                         # application MDC reaches agent threads (Chapter 107)
+      observability:
+        capture-message-content: false       # no customer text in traces (Chapter 92)
+      rest:
+        process-kill-enabled: false
+        process-status-enabled: false
+        process-events-enabled: false
+      action-qos.default:                    # bounded retries (Chapter 94)
+        max-attempts: 2
+        backoff-millis: 500
+        backoff-multiplier: 2.0
+        backoff-max-interval: 2000
+
+northwind:
+  billing:
+    url: ${NORTHWIND_BILLING_URL:http://localhost:8090}
+  tenants:
+    acme-outdoors:
+      name: Acme Outdoors
+      plan: BASIC
+      daily-budget-usd: 5.00
+      voice: Be brief and friendly.
+      active: true
+    peak-gear:
+      name: Peak Gear
+      plan: PREMIUM
+      daily-budget-usd: 50.00
+      voice: Be thorough and formal.
+      active: true
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics

@@ -57,12 +57,14 @@ Every folder is a standalone build. The examples were compiled and their tests r
 | `p12-mcp-client` | 87, 88 | **P12** Embabel MCP Client: allowlisted `McpToolGroup`, metadata allowlist, `McpToolFactory`, per-user token relay, lazy initialisation, tested against a misbehaving stand-in server |
 | `part13-production` | 90–102 | Production: unit, integration and evaluation tests; traces, metrics and structured logs; failure handling, cancellation and timeouts; threading and Java 25; REST API with async and SSE progress; web page; signed webhooks and events; cost measurement; Docker image, Kubernetes manifests, shutdown draining |
 | `p13-multi-tenant-rag` | 103–108 | **P13** Multi-Tenant RAG Platform: tenants from JWT claims, tenant context for agent, tools and logs, one index filtered by tenant and audience, per-plan models, daily budgets, isolation tests |
+| `p14-enterprise-support-platform` | 109 | **P14** Enterprise AI Support Platform: a cheap router in front of support, billing and research agents; JDBC catalogue, HTTP billing client, refunds with a staff approval queue, policy RAG, a global card-number guardrail, human fallback |
+| `p15-production-platform` | 111, 112 | **P15** Production-Grade Agentic AI Platform (capstone): P14 made multi-tenant and secured with JWTs, catalogue tools over MCP with an allowlist, per-tenant budgets and per-request caps, traces without customer text, tenant on every log line, Docker image and Kubernetes manifests |
 
-`part10-llm-engineering`, `part11-safety`, `p11-mcp-server`, `p12-mcp-client`, `part13-production` and `p13-multi-tenant-rag` run entirely offline. Their `lab` Spring profile registers scripted "lab" models (in Part XI, a deliberately naive one that obeys injected instructions) as real Embabel `LlmService` beans, so prompts, tool calls, retries, streaming and cost events go through Embabel's genuine pipeline without an API key. The replies are scripted, not generated.
+`part10-llm-engineering`, `part11-safety`, `p11-mcp-server`, `p12-mcp-client`, `part13-production`, `p13-multi-tenant-rag`, `p14-enterprise-support-platform` and `p15-production-platform` run entirely offline. Their `lab` Spring profile registers scripted "lab" models (in Part XI, a deliberately naive one that obeys injected instructions) as real Embabel `LlmService` beans, so prompts, tool calls, retries, streaming and cost events go through Embabel's genuine pipeline without an API key. The replies are scripted, not generated.
 
 P11 and P12 talk over real HTTP with the MCP Java SDK. P11's tests sign their own JWTs, and `mvn spring-boot:run -Dspring-boot.run.profiles=lab` in `p11-mcp-server` prints a short-lived token for trying the server with any MCP client.
 
-More Volume 3 code (Chapters 109–122, projects P14 and P15) will be added as the chapters are written.
+P13 and P15 print short-lived lab tokens at startup with the `lab` profile (`mvn spring-boot:run -Dspring-boot.run.profiles=lab`). P15's tests start a stand-in billing service and a stand-in MCP catalogue server in-process.
 
 ## Running the tests
 

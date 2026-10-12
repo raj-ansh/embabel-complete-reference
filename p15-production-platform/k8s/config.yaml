@@ -1,0 +1,9 @@
+# Non-secret settings. Secrets (model-provider) come from your secret manager (Chapter 84).
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: support-platform
+data:
+  default-llm: replace-with-your-model          # a chat model your provider offers (Chapter 72)
+  cheap-llm: replace-with-your-cheaper-model
+  issuer-uri: https://login.northwind.example

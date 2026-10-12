@@ -1,0 +1,60 @@
+# P15 on Kubernetes (Chapters 101 and 112).
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: support-platform
+  labels: { app: support-platform }
+spec:
+  replicas: 2
+  selector:
+    matchLabels: { app: support-platform }
+  template:
+    metadata:
+      labels: { app: support-platform }
+    spec:
+      terminationGracePeriodSeconds: 60          # let running agents finish (see readiness below)
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 10001
+      containers:
+        - name: support-platform
+          image: northwind/support-platform:1.0.0
+          ports:
+            - containerPort: 8080
+          env:
+            - name: SPRING_PROFILES_ACTIVE
+              value: prod
+            - name: NORTHWIND_DEFAULT_LLM
+              valueFrom: { configMapKeyRef: { name: support-platform, key: default-llm } }
+            - name: NORTHWIND_LLM_CHEAP
+              valueFrom: { configMapKeyRef: { name: support-platform, key: cheap-llm } }
+            - name: OPENAI_API_KEY
+              valueFrom: { secretKeyRef: { name: model-provider, key: openai-api-key } }
+            - name: NORTHWIND_LLM_STANDARD
+              valueFrom: { configMapKeyRef: { name: support-platform, key: default-llm } }
+            - name: NORTHWIND_ISSUER_URI
+              valueFrom: { configMapKeyRef: { name: support-platform, key: issuer-uri } }
+            - name: NORTHWIND_BILLING_URL
+              value: http://billing.northwind.svc.cluster.local
+            - name: NORTHWIND_CATALOGUE_MCP_URL
+              value: http://catalogue.northwind.svc.cluster.local
+          resources:
+            requests: { cpu: "500m", memory: "768Mi" }
+            limits: { cpu: "2", memory: "1Gi" }   # Java 25 sizes its default pools from this limit
+          startupProbe:
+            httpGet: { path: /actuator/health/liveness, port: 8080 }
+            periodSeconds: 5
+            failureThreshold: 24                   # up to two minutes to start
+          livenessProbe:
+            httpGet: { path: /actuator/health/liveness, port: 8080 }
+            periodSeconds: 10
+          readinessProbe:
+            httpGet: { path: /actuator/health/readiness, port: 8080 }
+            periodSeconds: 5
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: true
+          volumeMounts:
+            - { name: tmp, mountPath: /tmp }
+      volumes:
+        - { name: tmp, emptyDir: {} }
