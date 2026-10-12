@@ -1,0 +1,11 @@
+embabel:
+  models:
+    default-llm: lab-standard
+    llms:
+      cheap: lab-mini
+      balanced: lab-standard
+
+spring:
+  autoconfigure:
+    # the lab needs no model server; without this, the default Ollama provider polls localhost:11434 (Chapter 92)
+    exclude: com.embabel.agent.autoconfigure.models.ollama.AgentOllamaAutoConfiguration
