@@ -1,0 +1,13 @@
+embabel:
+  models:
+    default-llm: lab-basic
+    llms:
+      basic: lab-basic
+      premium: lab-premium
+
+northwind:
+  lab-jwt-secret: lab-secret-for-offline-examples-only-0123456789
+
+spring:
+  autoconfigure:
+    exclude: com.embabel.agent.autoconfigure.models.ollama.AgentOllamaAutoConfiguration

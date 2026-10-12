@@ -1,0 +1,63 @@
+spring:
+  application:
+    name: northwind-tenant-support
+  mvc:
+    problemdetails:
+      enabled: true
+  ai:
+    ollama:
+      base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
+
+embabel:
+  models:
+    default-llm: ${NORTHWIND_DEFAULT_LLM}
+    llms:
+      basic: ${NORTHWIND_LLM_BASIC:${NORTHWIND_DEFAULT_LLM}}
+      premium: ${NORTHWIND_LLM_PREMIUM:${NORTHWIND_DEFAULT_LLM}}
+  agent:
+    platform:
+      threading:
+        shared: true                      # Chapter 107: so MdcPropagation reaches agent threads
+      rest:
+        process-kill-enabled: false
+        process-status-enabled: false
+        process-events-enabled: false
+      action-qos.default:
+        max-attempts: 3
+        backoff-millis: 500
+        backoff-multiplier: 2.0
+        backoff-max-interval: 2000
+
+# Chapter 103: the platform's tenants. In production, a table maintained by onboarding.
+northwind:
+  tenants:
+    acme-outdoors:
+      name: Acme Outdoors
+      plan: BASIC
+      daily-budget-usd: 5.00
+      voice: Be brief and friendly.
+      active: true
+    peak-gear:
+      name: Peak Gear
+      plan: PREMIUM
+      daily-budget-usd: 50.00
+      voice: Be thorough and formal.
+      active: true
+    trail-tots:
+      name: Trail Tots
+      plan: BASIC
+      daily-budget-usd: 0.00001             # tiny, to show the daily budget at work (Chapter 106)
+      voice: Be cheerful.
+      active: true
+    old-camp:
+      name: Old Camp
+      plan: BASIC
+      daily-budget-usd: 1.00
+      voice: Be brief.
+      active: false
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics
