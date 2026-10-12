@@ -67,6 +67,13 @@ public class IssueService {
                 : outcomeOf(process));
     }
 
+    /** Chapter 97: process ids are not secrets; every id-based request checks the process belongs to the caller. */
+    public boolean isOwnedBy(String processId, String customerId) {
+        AgentProcess process = platform.getAgentProcess(processId);
+        IssueReport issue = process == null ? null : process.last(IssueReport.class);
+        return issue != null && issue.customerId().equals(customerId);
+    }
+
     /** Graceful: the current action finishes, then the process stops. */
     public boolean cancel(String processId) {
         AgentProcess process = platform.getAgentProcess(processId);

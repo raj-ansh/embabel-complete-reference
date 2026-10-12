@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>NorthWind order help</title>
+    <link rel="stylesheet" href="/app.css">
+</head>
+<body>
+<main>
+    <h1>Problem with an order?</h1>
+    <form id="issue-form">
+        <label>Order number <input name="orderNumber" placeholder="NW-10442" required pattern="NW-\d{5}"></label>
+        <label>What went wrong? <textarea name="message" required maxlength="2000"></textarea></label>
+        <button type="submit">Send</button>
+        <button type="button" id="cancel" hidden>Cancel</button>
+    </form>
+    <ol id="steps" aria-live="polite"></ol>
+    <p id="reply" aria-live="polite"></p>
+</main>
+<script src="/app.js"></script>
+</body>
+</html>
