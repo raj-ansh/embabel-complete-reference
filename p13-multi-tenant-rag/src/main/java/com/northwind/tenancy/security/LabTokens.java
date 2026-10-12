@@ -2,6 +2,7 @@ package com.northwind.tenancy.security;
 
 import com.nimbusds.jose.jwk.source.ImmutableSecret;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.ApplicationRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
@@ -36,6 +37,16 @@ public class LabTokens {
     @Bean
     JwtDecoder labJwtDecoder() {
         return NimbusJwtDecoder.withSecretKey(key).build();
+    }
+
+    /** For trying P13 by hand: ten-minute tokens, printed at startup in the lab profile only. */
+    @Bean
+    ApplicationRunner printLabTokens() {
+        return args -> {
+            System.out.println("Lab token, Acme Outdoors customer asha: " + tokenFor("asha", "acme-outdoors", "support"));
+            System.out.println("Lab token, Peak Gear customer chloe:    " + tokenFor("chloe", "peak-gear", "support"));
+            System.out.println("Lab token, Acme Outdoors admin:         " + tokenFor("ops-1", "acme-outdoors", "support tenant:admin"));
+        };
     }
 
     public String tokenFor(String user, String tenant, String scopes) {
