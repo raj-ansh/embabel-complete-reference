@@ -45,7 +45,7 @@ class CostTest {
                 System.out.println("meter " + name + " {" + tags + "} = " + value);
             }
         }
-        System.out.println("triage prompt with generated examples: " + promptTokens() + " tokens");
+        System.out.println("triage prompt: " + promptTokens() + " tokens");
     }
 
     /** The same estimate the lab model reports as usage: about four characters per token. */
