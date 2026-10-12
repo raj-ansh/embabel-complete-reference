@@ -23,3 +23,14 @@ management:
     web:
       exposure:
         include: health,info,metrics
+
+northwind:
+  model-timeout: 20s                      # per model call (Chapter 94)
+
+# Chapter 94: Embabel's default action retry (5 attempts, backoffs growing to a minute) turned a 300 ms
+# model timeout into a three-minute request. Bound the worst case explicitly.
+embabel.agent.platform.action-qos.default:
+  max-attempts: 3
+  backoff-millis: 500
+  backoff-multiplier: 2.0
+  backoff-max-interval: 2000

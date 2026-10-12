@@ -10,9 +10,13 @@ import com.northwind.production.domain.Issues.IssueReport;
 import com.northwind.production.domain.Issues.OrderFacts;
 import com.northwind.production.domain.Issues.Resolution;
 import com.northwind.production.domain.Issues.Triage;
+import com.embabel.common.ai.model.LlmOptions;
 import com.northwind.production.service.OrderService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+
+import java.time.Duration;
 
 /**
  * Part XIII: resolves a customer's problem with an order. One service call, then two model calls (triage with
@@ -28,15 +32,18 @@ public class IssueResolutionAgent {
     private static final Logger log = LoggerFactory.getLogger(IssueResolutionAgent.class);
 
     private final OrderService orders;
+    private final Duration modelTimeout;
 
-    public IssueResolutionAgent(OrderService orders) {
+    public IssueResolutionAgent(OrderService orders,
+                                @Value("${northwind.model-timeout:30s}") Duration modelTimeout) {   // Chapter 94
         this.orders = orders;
+        this.modelTimeout = modelTimeout;
     }
 
     @Action(description = "Classify the customer's problem")
     public Triage triage(IssueReport issue, OrderFacts order, OperationContext context) {
         return context.ai()
-                .withLlmByRole("cheap")
+                .withLlm(LlmOptions.withLlmForRole("cheap").withTimeout(modelTimeout))
                 .withId("triage")
                 .createObject("""
                         Classify the customer's problem as DAMAGED, LATE, WRONG_ITEM or OTHER, and say whether it is \
@@ -67,7 +74,7 @@ public class IssueResolutionAgent {
     @Action(description = "Write the reply")
     public CustomerReply reply(IssueReport issue, Resolution resolution, OperationContext context) {
         String text = context.ai()
-                .withLlmByRole("balanced")
+                .withLlm(LlmOptions.withLlmForRole("balanced").withTimeout(modelTimeout))
                 .withId("reply")
                 .generateText("""
                         Write a short, friendly reply to a NorthWind customer about order %s.

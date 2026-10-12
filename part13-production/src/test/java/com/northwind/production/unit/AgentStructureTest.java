@@ -7,6 +7,7 @@ import com.northwind.production.agent.IssueResolutionAgent;
 import com.northwind.production.service.OrderService;
 import org.junit.jupiter.api.Test;
 
+import java.time.Duration;
 import java.util.stream.Collectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -30,7 +31,7 @@ class AgentStructureTest {
 
     @Test
     void triageNeedsTheOrderSoTheOwnershipCheckComesFirst() {
-        var agent = new AgentMetadataReader().createAgentMetadata(new IssueResolutionAgent(mock(OrderService.class)));
+        var agent = new AgentMetadataReader().createAgentMetadata(new IssueResolutionAgent(mock(OrderService.class), Duration.ofSeconds(30)));
 
         for (Action action : agent.getActions()) {
             System.out.println(shortName(action) + ": "
