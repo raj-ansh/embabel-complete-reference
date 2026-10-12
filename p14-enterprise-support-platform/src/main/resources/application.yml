@@ -4,8 +4,7 @@ spring:
   mvc:
     problemdetails:
       enabled: true
-  datasource:
-    url: jdbc:h2:mem:northwind;DB_CLOSE_DELAY=-1
+  # no datasource URL: Spring Boot creates a uniquely named embedded H2 database for each context
   ai:
     ollama:
       base-url: ${OLLAMA_BASE_URL:http://localhost:11434}
