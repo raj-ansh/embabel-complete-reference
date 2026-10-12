@@ -4,5 +4,5 @@ kind: ConfigMap
 metadata:
   name: issue-service
 data:
-  default-llm: gpt-4.1-mini
-  cheap-llm: gpt-4.1-nano
+  default-llm: replace-with-your-model          # a chat model your provider offers (Chapter 72)
+  cheap-llm: replace-with-your-cheaper-model

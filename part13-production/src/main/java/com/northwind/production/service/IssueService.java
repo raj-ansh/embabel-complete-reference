@@ -11,6 +11,7 @@ import com.northwind.production.domain.Issues.CustomerReply;
 import com.northwind.production.domain.Issues.IssueReport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import jakarta.annotation.PreDestroy;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -23,6 +24,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 
 /**
  * Part XIII: the one place that runs the agent and turns a process's final status into an outcome that
@@ -50,11 +52,30 @@ public class IssueService {
     }
 
     public Outcome resolve(IssueReport issue) {
+        return keepingCallerMdc(() -> {
+            try {
+                return outcomeOf(AgentInvocation.create(platform, CustomerReply.class).run(issue));
+            } catch (Exception e) {                               // a FAILED process surfaces as an exception
+                log.warn("Issue resolution failed for order {}", issue.orderNumber(), e);
+                return new Outcome(Status.FAILED, null, FAILED_MESSAGE, null);
+            }
+        });
+    }
+
+    /**
+     * Chapter 93: Embabel 1.5.3 leaves the run id and agent name in the calling thread's MDC after a run.
+     * On pooled request threads, later log lines would carry the wrong run id, so restore the caller's MDC.
+     */
+    private static <T> T keepingCallerMdc(Supplier<T> work) {
+        Map<String, String> before = MDC.getCopyOfContextMap();
         try {
-            return outcomeOf(AgentInvocation.create(platform, CustomerReply.class).run(issue));
-        } catch (Exception e) {                                   // a FAILED process surfaces as an exception
-            log.warn("Issue resolution failed for order {}", issue.orderNumber(), e);
-            return new Outcome(Status.FAILED, null, FAILED_MESSAGE, null);
+            return work.get();
+        } finally {
+            if (before == null) {
+                MDC.clear();
+            } else {
+                MDC.setContextMap(before);
+            }
         }
     }
 
@@ -63,9 +84,11 @@ public class IssueService {
      * {@link #outcome(String)} or {@link #cancel(String)} the work while it runs.
      */
     public String start(IssueReport issue, ProcessOptions options) {
-        AgentProcess process = platform.createAgentProcess(agent(), options, Map.of("it", issue));
-        track(platform.start(process));
-        return process.getId();
+        return keepingCallerMdc(() -> {
+            AgentProcess process = platform.createAgentProcess(agent(), options, Map.of("it", issue));
+            track(platform.start(process));
+            return process.getId();
+        });
     }
 
     public Optional<Outcome> outcome(String processId) {
@@ -103,7 +126,7 @@ public class IssueService {
 
     /** Chapter 95: the same work without holding the caller's thread. */
     public CompletableFuture<Outcome> resolveAsync(IssueReport issue) {
-        return track(AgentInvocation.create(platform, CustomerReply.class).runAsync(issue))
+        return keepingCallerMdc(() -> track(AgentInvocation.create(platform, CustomerReply.class).runAsync(issue)))
                 .thenApply(IssueService::outcomeOf)
                 .exceptionally(e -> {
                     log.warn("Issue resolution failed for order {}", issue.orderNumber(), e);

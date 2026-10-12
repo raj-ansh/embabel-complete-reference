@@ -3,17 +3,23 @@ package com.northwind.production.observability;
 import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
+import com.embabel.agent.api.invocation.AgentInvocation;
+import com.embabel.agent.core.AgentPlatform;
+import com.northwind.production.domain.Issues.CustomerReply;
 import com.northwind.production.domain.Issues.IssueReport;
 import com.northwind.production.service.IssueService;
 import io.opentelemetry.api.GlobalOpenTelemetry;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -29,6 +35,7 @@ class LoggingTest {
     }
 
     @Autowired IssueService issues;
+    @Autowired AgentPlatform platform;
 
     @Test
     void mdcCarriesTheRunAgentAndAction() {
@@ -55,5 +62,26 @@ class LoggingTest {
 
         assertThat(mdc).containsEntry("embabel.action.name", "com.northwind.production.agent.IssueResolutionAgent.lookUp")
                 .containsKey("embabel.agent.run_id");
+    }
+
+    @Test
+    void callerThreadMdcAfterARun() {
+        MDC.clear();
+        AgentInvocation.create(platform, CustomerReply.class)
+                .run(new IssueReport("C-1001", "NW-10442", "The flysheet arrived torn"));
+        System.out.println("caller MDC after AgentInvocation.run: " + mdcKeys());
+
+        MDC.clear();
+        issues.resolve(new IssueReport("C-1001", "NW-10442", "The flysheet arrived torn"));
+        System.out.println("caller MDC after IssueService.resolve: " + mdcKeys());
+        assertThat(MDC.getCopyOfContextMap()).isNullOrEmpty();
+    }
+
+    private static Set<String> mdcKeys() {
+        return new TreeMap<>(orEmpty(MDC.getCopyOfContextMap())).keySet();
+    }
+
+    private static Map<String, String> orEmpty(Map<String, String> map) {
+        return map == null ? Map.of() : map;
     }
 }

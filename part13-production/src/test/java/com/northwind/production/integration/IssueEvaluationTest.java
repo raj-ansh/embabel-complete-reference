@@ -45,7 +45,8 @@ class IssueEvaluationTest {
     @Test
     void remediesMatchWhatAPersonWouldDecide() throws Exception {
         List<Case> cases = new ArrayList<>();
-        for (String line : new ClassPathResource("evaluation/issues.csv").getContentAsString(StandardCharsets.UTF_8).split("\n")) {
+        String csv = new ClassPathResource("evaluation/issues.csv").getContentAsString(StandardCharsets.UTF_8);
+        for (String line : csv.split("\n")) {
             if (!line.isBlank() && !line.startsWith("#")) {
                 String[] f = line.strip().split("\\|");
                 cases.add(new Case(f[0], f[1], Remedy.valueOf(f[2])));

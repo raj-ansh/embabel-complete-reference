@@ -20,6 +20,7 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -56,9 +57,10 @@ class TracingTest {
         spans.reset();
         issues.resolve(new IssueReport("C-1001", "NW-10442", "The flysheet arrived torn"));
 
-        tracerProvider.forceFlush().join(10, java.util.concurrent.TimeUnit.SECONDS);   // spans are exported in batches
+        tracerProvider.forceFlush().join(10, TimeUnit.SECONDS);       // spans are exported in batches
         List<SpanData> finished = spans.getFinishedSpanItems();
-        SpanData root = finished.stream().filter(s -> !s.getParentSpanContext().isValid()).findFirst().orElseThrow();
+        SpanData root = finished.stream()
+                .filter(s -> !s.getParentSpanContext().isValid()).findFirst().orElseThrow();
         print(root, finished, 0);
 
         attributes(finished, "llm.invocation lab-mini");
@@ -93,14 +95,13 @@ class TracingTest {
         System.out.println("attributes of \"" + name + "\":");
         Map<String, String> attributes = new TreeMap<>();
         span.getAttributes().forEach((k, v) -> attributes.put(k.getKey(), String.valueOf(v).replace("\n", " ")));
-        attributes.forEach((k, v) -> System.out.println("  " + k + " = " + (v.length() > 60 ? v.substring(0, 60) + "..." : v)));
+        attributes.forEach((k, v) ->
+                System.out.println("  " + k + " = " + (v.length() > 60 ? v.substring(0, 60) + "..." : v)));
     }
 
+    /** Prints the span tree: children indented under their parent, in the order they started. */
     private static void print(SpanData span, List<SpanData> all, int depth) {
-        Map<String, Object> attributes = new TreeMap<>();
-        span.getAttributes().forEach((k, v) -> attributes.put(k.getKey(), v));
-        System.out.println("  ".repeat(depth) + span.getName()
-                + (attributes.containsKey("embabel.span.type") ? " (" + attributes.get("embabel.span.type") + ")" : ""));
+        System.out.println("  ".repeat(depth) + span.getName());
         all.stream()
                 .filter(s -> s.getParentSpanId().equals(span.getSpanId()))
                 .sorted(Comparator.comparingLong(SpanData::getStartEpochNanos))
