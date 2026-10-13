@@ -1,0 +1,9 @@
+embabel:
+  models:
+    default-llm: lab-standard
+    llms:
+      standard: lab-standard
+
+spring:
+  autoconfigure:
+    exclude: com.embabel.agent.autoconfigure.models.ollama.AgentOllamaAutoConfiguration

@@ -40,7 +40,7 @@ public class TenantSupportAgent {
         String text = context.ai()
                 .withLlm(LlmOptions.withLlmForRole(tenant.plan() == Plan.PREMIUM ? "premium" : "basic"))  // Chapter 106
                 .withId("answer")
-                .withToolObject(rag.toolObject())
+                .withTools(rag.tools())
                 .withPromptContributor(rag)
                 .withToolObject(orders)
                 .withToolCallContext(Map.of("tenant", tenant.tenantId(), "user", tenant.userId()))      // Chapter 104

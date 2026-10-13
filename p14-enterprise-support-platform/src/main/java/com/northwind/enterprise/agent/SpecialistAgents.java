@@ -55,7 +55,7 @@ public final class SpecialistAgents {
             var rag = policies.search();
             return new SupportAnswer(withCustomer(context.ai().withLlmByRole("standard").withId("support"), request)
                     .withToolObject(orders)
-                    .withToolObject(rag.toolObject())
+                    .withTools(rag.tools())
                     .withPromptContributor(rag)
                     .generateText(prompt("support assistant", request)));
         }
@@ -96,7 +96,7 @@ public final class SpecialistAgents {
             var rag = guides.search();
             return new ResearchAnswer(context.ai().withLlmByRole("standard").withId("research")
                     .withToolObject(catalog)
-                    .withToolObject(rag.toolObject())
+                    .withTools(rag.tools())
                     .withPromptContributor(rag)
                     .generateText(prompt("product researcher", request)));
         }

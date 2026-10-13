@@ -57,7 +57,7 @@ public final class SpecialistAgents {
             var rag = policies.searchFor(tenant);
             return new SupportAnswer(scoped(context.ai().withLlmByRole("standard").withId("support"), tenant, request)
                     .withToolObject(orders)
-                    .withToolObject(rag.toolObject())
+                    .withTools(rag.tools())
                     .withPromptContributor(rag)
                     .generateText(prompt("support assistant", tenant, request)));
         }
@@ -96,7 +96,7 @@ public final class SpecialistAgents {
             var rag = guides.searchFor(tenant);
             return new ResearchAnswer(context.ai().withLlmByRole("standard").withId("research")
                     .withToolGroup(McpToolsConfig.CATALOGUE_ROLE)            // allowlisted MCP tools
-                    .withToolObject(rag.toolObject())
+                    .withTools(rag.tools())
                     .withPromptContributor(rag)
                     .generateText(prompt("product researcher", tenant, request)));
         }
